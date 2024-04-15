@@ -4,14 +4,28 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run Xenomai tests",
+            "label": "Run Xenomai 4 tests",
+            "detail": "Run tests for the EVL core",
             "type": "shell",
             "command": "./deploy.sh",
+            "args": ["4"],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        },
+        {
+            "label": "Run Xenomai 3 tests",
+            "detail": "Run tests for the Cobalt core",
+            "type": "shell",
+            "command": "./deploy.sh",
+            "args": ["3"],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
     ]
 }
