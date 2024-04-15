@@ -60,7 +60,7 @@ docker exec -it xenomai smokey --run -k
 # Run clocktest
 DURATION=30
 printf "\nRunning clocktest for %s seconds\n" "$DURATION"
-clocktest -D -T 30 -C CLOCK_HOST_REALTIME || clocktest -T 30
+docker exec -it xenomai clocktest -D -T 30 -C CLOCK_HOST_REALTIME || clocktest -T 30
 
 DURATION=60
 printf "\nRunning switchtest and latency concurrently for %s seconds\n" "$DURATION"
