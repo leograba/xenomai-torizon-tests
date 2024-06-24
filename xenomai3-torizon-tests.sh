@@ -73,9 +73,9 @@ docker exec -dt xenomai sh -c "switchtest -q -T $DURATION"
 docker exec -it xenomai bash -c 'echo 0 > /proc/xenomai/latency'
 docker exec -it xenomai latency -q -T $DURATION
 
-# Check Dovetail and Xenomai kernel config
-printf "\nDovetail and EVL kernel config:\n"
-zcat /proc/config.gz | grep -e DOVETAIL -e XENO
+# Check i-pipe, Dovetail, EVL and Xenomai kernel config
+printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
+zcat /proc/config.gz | grep -e DOVETAIL -e XENO -e IPIPE
 
 # Bye bye
 exit 0
