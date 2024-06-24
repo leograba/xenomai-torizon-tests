@@ -70,6 +70,7 @@ docker exec -dt xenomai sh -c "switchtest -q -T $DURATION"
 
 # Run latency test for 1 minute
 #docker exec -it xenomai latency -q -T 300
+docker exec -it xenomai bash -c 'echo 0 > /proc/xenomai/latency'
 docker exec -it xenomai latency -q -T $DURATION
 
 # Check Dovetail and Xenomai kernel config

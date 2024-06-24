@@ -63,6 +63,7 @@ docker exec -dt xenomai sh -c "hectic -q -T $DURATION"
 # Run latmus test for 1 minute
 #docker exec -it xenomai latmus -q -T 300
 # Alternative long-run test for 24 hours
+docker exec -it xenomai bash -c 'echo 0 > /proc/xenomai/latency'
 docker exec -it xenomai latmus -q -T $DURATION
 
 # Check Dovetail and EVL kernel config
