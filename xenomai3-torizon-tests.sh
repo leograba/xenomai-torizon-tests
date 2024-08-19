@@ -15,7 +15,7 @@ if [[ $(docker ps --all --quiet) ]]; then
 fi
 
 printf "Pulling the latest version of containers\n\n"
-docker pull --quiet leograba/xeno3:ubuntu-22.04
+docker pull --quiet leograba/xeno3:ubuntu-22.04-xenomai-3.2.4
 #docker pull --quiet leograba/weston:rc
 docker pull --quiet torizon/graphics-tests:rc
 
@@ -36,7 +36,7 @@ docker run --name graphics-tests -dt --rm  \
 
 # Start container with Xenomai 3 userspace tools
 docker run --name xenomai --privileged --rm -d -v /dev:/dev \
-        leograba/xeno3:ubuntu-22.04 sleep infinity
+        leograba/xeno3:ubuntu-22.04-xenomai-3.2.4 sleep infinity
 
 printf "Containers started!\n\n"
 
