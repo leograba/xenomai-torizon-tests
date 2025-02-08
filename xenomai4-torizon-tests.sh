@@ -8,6 +8,18 @@ LATMUS_HECTIC_DURATION=60
 
 ### CODE ###
 
+# Welcome
+printf "---- Xenomai 4 Test Report ----\n\n"
+
+# Print system info
+# Inspired by tdx-info
+printf "Kernel version: %s\n" "$(uname -rv)"
+printf "Kernel command line: %s\n\n" "$(cat /proc/cmdline)"
+printf "Distro name: %s\n" "$(grep ^NAME /etc/os-release)"
+printf "Distro version: %s\n" "$(grep VERSION_ID /etc/os-release)"
+printf "Distro variant: %s\n\n" "$(grep VARIANT /etc/os-release)"
+printf "Hostname: %s\n\n" "$(cat /etc/hostname)"
+
 # Print the display connector state
 printf "Display ${GRAPHICS_CARD} connector state is: %s\n\n" \
        "$(cat /sys/class/drm/${GRAPHICS_CARD}/status)"
