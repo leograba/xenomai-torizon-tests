@@ -1,7 +1,28 @@
 #!/bin/bash
 
+### VARIABLES ###
+XENOMAI_VERSION="v3.2.6"
+GRAPHICS_TESTS_VERSION="stable-rc"
+GRAPHICS_CARD="card1-HDMI-A-1"
+CLOCKTEST_SWITCHTEST_DURATION=60
+
+### CODE ###
+
+# Welcome
+printf "#---- Xenomai 3 Test Report ----#\n\n"
+
+# Print system info
+# Inspired by tdx-info
+printf "Kernel version: %s\n" "$(uname -rv)"
+printf "Kernel command line: %s\n\n" "$(cat /proc/cmdline)"
+printf "Distro name: %s\n" "$(grep ^NAME /etc/os-release)"
+printf "Distro version: %s\n" "$(grep VERSION_ID /etc/os-release)"
+printf "Distro variant: %s\n\n" "$(grep VARIANT /etc/os-release)"
+printf "Hostname: %s\n\n" "$(cat /etc/hostname)"
+
 # Print the display connector state
-printf "Display connector state is: %s\n\n" "$(cat /sys/class/drm/card0-HDMI-A-1/status)"
+printf "Display ${GRAPHICS_CARD} connector state is: %s\n\n" \
+       "$(cat /sys/class/drm/${GRAPHICS_CARD}/status)"
 
 # Setup before start
 printf "Stopping all containers before starting\n\n"
@@ -15,9 +36,9 @@ if [[ $(docker ps --all --quiet) ]]; then
 fi
 
 printf "Pulling the latest version of containers\n\n"
-docker pull --quiet leograba/xeno3:ubuntu-22.04-xenomai-3.2.4
+docker pull --quiet leograba/xeno3:${XENOMAI_VERSION}
 #docker pull --quiet leograba/weston:rc
-docker pull --quiet torizon/graphics-tests:rc
+docker pull --quiet torizon/graphics-tests:${GRAPHICS_TESTS_VERSION}
 
 printf "Starting containers in the background\n\n"
 # Start Weston container
@@ -32,11 +53,11 @@ docker run --name graphics-tests -dt --rm  \
         -v /dev:/dev --device-cgroup-rule="c 4:* rmw"  \
         --device-cgroup-rule="c 13:* rmw" --device-cgroup-rule="c 199:* rmw" \
         --device-cgroup-rule="c 226:* rmw" \
-        torizon/graphics-tests:rc
+        torizon/graphics-tests:${GRAPHICS_TESTS_VERSION}
 
 # Start container with Xenomai 3 userspace tools
 docker run --name xenomai --privileged --rm -d -v /dev:/dev \
-        leograba/xeno3:ubuntu-22.04-xenomai-3.2.4 sleep infinity
+        leograba/xeno3:${XENOMAI_VERSION} sleep infinity
 
 printf "Containers started!\n\n"
 
@@ -58,20 +79,18 @@ printf "\n\nSmokey unit test results:\n"
 docker exec -it xenomai smokey --run -k
 
 # Run clocktest
-DURATION=30
-printf "\nRunning clocktest for %s seconds\n" "$DURATION"
-docker exec -it xenomai clocktest -D -T 30 -C CLOCK_HOST_REALTIME || clocktest -T 30
+printf "\nRunning clocktest for %s seconds\n" "$CLOCKTEST_SWITCHTEST_DURATION"
+docker exec -it xenomai clocktest -D -T $CLOCKTEST_SWITCHTEST_DURATION -C CLOCK_HOST_REALTIME || clocktest -T $CLOCKTEST_SWITCHTEST_DURATION
 
-DURATION=60
-printf "\nRunning switchtest and latency concurrently for %s seconds\n" "$DURATION"
+printf "\nRunning switchtest and latency concurrently for %s seconds\n" "$CLOCKTEST_SWITCHTEST_DURATION"
 # Run switchtest test for 10 seconds
 #docker exec -it xenomai switchtest -T 10
-docker exec -dt xenomai sh -c "switchtest -q -T $DURATION"
+docker exec -dt xenomai sh -c "switchtest -q -T $CLOCKTEST_SWITCHTEST_DURATION"
 
 # Run latency test for 1 minute
 #docker exec -it xenomai latency -q -T 300
 docker exec -it xenomai bash -c 'echo 0 > /proc/xenomai/latency'
-docker exec -it xenomai latency -q -T $DURATION
+docker exec -it xenomai latency -q -T $CLOCKTEST_SWITCHTEST_DURATION
 
 # Check i-pipe, Dovetail, EVL and Xenomai kernel config
 printf "\ni-pipe, Dovetail, and EVL kernel config:\n"

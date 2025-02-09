@@ -9,7 +9,7 @@ LATMUS_HECTIC_DURATION=60
 ### CODE ###
 
 # Welcome
-printf "---- Xenomai 4 Test Report ----\n\n"
+printf "#---- Xenomai 4 Test Report ----#\n\n"
 
 # Print system info
 # Inspired by tdx-info
