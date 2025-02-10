@@ -80,7 +80,7 @@ docker exec -it xenomai smokey --run -k
 
 # Run clocktest
 printf "\nRunning clocktest for %s seconds\n" "$CLOCKTEST_SWITCHTEST_DURATION"
-docker exec -it xenomai clocktest -D -T $CLOCKTEST_SWITCHTEST_DURATION -C CLOCK_HOST_REALTIME || clocktest -T $CLOCKTEST_SWITCHTEST_DURATION
+docker exec -it xenomai sh -c "clocktest -D -T $CLOCKTEST_SWITCHTEST_DURATION -C CLOCK_HOST_REALTIME || clocktest -T $CLOCKTEST_SWITCHTEST_DURATION"
 
 printf "\nRunning switchtest and latency concurrently for %s seconds\n" "$CLOCKTEST_SWITCHTEST_DURATION"
 # Run switchtest test for 10 seconds
