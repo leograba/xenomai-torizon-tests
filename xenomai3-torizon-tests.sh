@@ -41,18 +41,11 @@ docker pull --quiet leograba/xeno3:${XENOMAI_VERSION}
 docker pull --quiet torizon/graphics-tests:${GRAPHICS_TESTS_VERSION}
 
 printf "Starting containers in the background\n\n"
-# Start Weston container
-#docker run --name weston -d --rm --net=host --cap-add CAP_SYS_TTY_CONFIG \
-#        -v /dev:/dev -v /tmp:/tmp -v /run/udev/:/run/udev/ \
-#        --device-cgroup-rule='c 4:* rmw' --device-cgroup-rule='c 13:* rmw' \
-#        --device-cgroup-rule='c 226:* rmw' \
-#        leograba/weston:rc --developer --tty=/dev/tty7
 
 # Start graphics-tests container
 docker run --name graphics-tests -dt --rm  \
-        -v /dev:/dev --device-cgroup-rule="c 4:* rmw"  \
-        --device-cgroup-rule="c 13:* rmw" --device-cgroup-rule="c 199:* rmw" \
-        --device-cgroup-rule="c 226:* rmw" \
+        --privileged \
+        -v /dev:/dev -v /tmp:/tmp \
         torizon/graphics-tests:${GRAPHICS_TESTS_VERSION}
 
 # Start container with Xenomai 3 userspace tools
