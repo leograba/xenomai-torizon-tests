@@ -24,6 +24,10 @@ printf "Hostname: %s\n\n" "$(cat /etc/hostname)"
 printf "Display ${GRAPHICS_CARD} connector state is: %s\n\n" \
        "$(cat /sys/class/drm/${GRAPHICS_CARD}/status)"
 
+# Check i-pipe, Dovetail, EVL and Xenomai kernel config
+printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
+zcat /proc/config.gz | grep -e DOVETAIL -e XENO -e IPIPE
+
 # Setup before start
 printf "Stopping all containers before starting\n\n"
 if [[ $(docker ps --all --quiet) ]]; then
@@ -84,10 +88,6 @@ docker exec -dt xenomai sh -c "switchtest -q -T $CLOCKTEST_SWITCHTEST_DURATION"
 #docker exec -it xenomai latency -q -T 300
 docker exec -it xenomai bash -c 'echo 0 > /proc/xenomai/latency'
 docker exec -it xenomai latency -q -T $CLOCKTEST_SWITCHTEST_DURATION
-
-# Check i-pipe, Dovetail, EVL and Xenomai kernel config
-printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
-zcat /proc/config.gz | grep -e DOVETAIL -e XENO -e IPIPE
 
 # Bye bye
 exit 0
