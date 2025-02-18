@@ -20,9 +20,14 @@ printf "Distro version: %s\n" "$(grep VERSION_ID /etc/os-release)"
 printf "Distro variant: %s\n\n" "$(grep VARIANT /etc/os-release)"
 printf "Hostname: %s\n\n" "$(cat /etc/hostname)"
 
-# Print the display connector state
-printf "Display ${GRAPHICS_CARD} connector state is: %s\n\n" \
-       "$(cat /sys/class/drm/${GRAPHICS_CARD}/status)"
+# Print the display connectors state
+printf "Display connectors state is:\n\n"
+for d in /sys/class/drm/*/status; do
+    conn=$(basename "$(dirname "$d")")
+    status=$(cat "$d")
+    enabled=$(cat "$(dirname "$d")/enabled")
+    printf "%s: %s / %s\n" "$conn" "$status" "$enabled"
+done
 
 # Check i-pipe, Dovetail, EVL and Xenomai kernel config
 printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
