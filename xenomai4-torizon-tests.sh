@@ -14,7 +14,6 @@ printf "#---- Xenomai 4 Test Report ----#\n\n"
 # Print system info
 # Inspired by tdx-info
 printf "Kernel version: %s\n" "$(uname -rv)"
-printf "Kernel command line: %s\n\n" "$(cat /proc/cmdline)"
 printf "Distro name: %s\n" "$(grep ^NAME /etc/os-release)"
 printf "Distro version: %s\n" "$(grep VERSION_ID /etc/os-release)"
 printf "Distro variant: %s\n\n" "$(grep VARIANT /etc/os-release)"
@@ -29,9 +28,16 @@ for d in /sys/class/drm/*/status; do
     printf "%s: %s / %s\n" "$conn" "$status" "$enabled"
 done
 
-# Check Dovetail and EVL kernel config
-printf "\nDovetail and EVL kernel config:\n"
-zcat /proc/config.gz | grep -e DOVETAIL -e EVL
+# Check i-pipe, Dovetail, EVL and Xenomai kernel config
+printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
+zcat /proc/config.gz | grep -e DOVETAIL -e XENO -e IPIPE
+
+# Check the kernel logs for things related to Xenomai
+printf "Check for traces of Xenomai in the kernel logs:\n"
+dmesg | grep -ie xenomai -ie evl -ie dovetail
+
+# Check the kernel command line
+printf "\nKernel command line: %s\n\n" "$(cat /proc/cmdline)"
 
 # Setup before start
 printf "Stopping all containers before starting\n\n"

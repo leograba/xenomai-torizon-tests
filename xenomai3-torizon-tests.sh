@@ -14,7 +14,6 @@ printf "#---- Xenomai 3 Test Report ----#\n\n"
 # Print system info
 # Inspired by tdx-info
 printf "Kernel version: %s\n" "$(uname -rv)"
-printf "Kernel command line: %s\n\n" "$(cat /proc/cmdline)"
 printf "Distro name: %s\n" "$(grep ^NAME /etc/os-release)"
 printf "Distro version: %s\n" "$(grep VERSION_ID /etc/os-release)"
 printf "Distro variant: %s\n\n" "$(grep VARIANT /etc/os-release)"
@@ -32,6 +31,13 @@ done
 # Check i-pipe, Dovetail, EVL and Xenomai kernel config
 printf "\ni-pipe, Dovetail, and EVL kernel config:\n"
 zcat /proc/config.gz | grep -e DOVETAIL -e XENO -e IPIPE
+
+# Check the kernel logs for things related to Xenomai
+printf "Check for traces of Xenomai in the kernel logs:\n"
+dmesg | grep -ie xenomai -ie evl -ie dovetail
+
+# Check the kernel command line
+printf "\nKernel command line: %s\n\n" "$(cat /proc/cmdline)"
 
 # Setup before start
 printf "Stopping all containers before starting\n\n"
@@ -71,10 +77,6 @@ printf "kmscube running\n\n"
 docker exec -dt xenomai sh -c 'while :; do hackbench > /dev/null ; done'
 docker exec -dt xenomai sh -c 'dd if=/dev/zero of=/dev/null bs=128M'
 printf "Stress tests running\n\n"
-
-# Check if the Cobalt core loaded
-printf "Check if Cobalt is loaded from the kernel logs:\n"
-dmesg | grep -i xenomai
 
 # Run smokey unit tests
 printf "\n\nSmokey unit test results:\n"
